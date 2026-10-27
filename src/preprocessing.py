@@ -60,8 +60,8 @@ def split_into_sentences(text: str) -> List[str]:
 def create_chunks(
     sentences: List[str],
     tokenizer,
-    target_tokens: int = 150,
-    max_tokens: int = 200
+    target_tokens: int = 50,
+    max_tokens: int = 70
 ) -> List[Dict]:
     """
     Group consecutive sentences into chunks.
@@ -159,34 +159,42 @@ def create_chunks(
     return chunks
 
 
-def create_text_chunks(text: str, tokenizer) -> List[Dict]:
+def create_text_chunks(
+    text: str,
+    tokenizer,
+    target_tokens: int = 50,
+    max_tokens: int = 70,
+) -> List[Dict]:
     """
-    Complete preprocessing pipeline:
+    Preprocessing pipeline:
+    clean -> sentence splitting -> chunking -> token counting.
 
-    raw text
-        ↓
-    cleaning
-        ↓
-    sentence segmentation
-        ↓
-    chunk creation
-        ↓
-    token counting
+    target_tokens: desired approximate chunk size.
+    max_tokens: maximum preferred chunk size.
     """
+
+    if target_tokens <= 0 or max_tokens <= 0:
+        raise ValueError("Chunk sizes must be positive.")
+
+    if target_tokens > max_tokens:
+        raise ValueError(
+            "target_tokens cannot exceed max_tokens."
+        )
 
     sentences = split_into_sentences(text)
 
     chunks = create_chunks(
         sentences,
-        tokenizer
+        tokenizer,
+        target_tokens=target_tokens,
+        max_tokens=max_tokens,
     )
 
     for chunk in chunks:
-
         chunk["token_count"] = len(
             tokenizer.encode(
                 chunk["text"],
-                add_special_tokens=False
+                add_special_tokens=False,
             )
         )
 
