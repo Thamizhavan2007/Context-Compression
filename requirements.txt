@@ -1,0 +1,12 @@
+numpy
+pandas
+scikit-learn
+networkx
+tqdm
+matplotlib
+datasets
+sentence-transformers
+transformers
+accelerate
+pypdf
+streamlit
